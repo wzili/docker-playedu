@@ -1,2 +1,5 @@
 # docker-playedu
-playedu docker compose
+docker-compose build
+
+docker-compose up -d
+

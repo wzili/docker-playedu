@@ -1,0 +1,4 @@
+data_minio
+data_mysql
+data_redis
+.DS_Store

@@ -1,0 +1,53 @@
+version: '3.1'
+services:
+  playedu:
+    image: registry.cn-hangzhou.aliyuncs.com/playedu/light:1.0-beta.6
+    restart: always
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: playedu
+      DB_USER: root
+      DB_PASS: example
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASS: playedu_redis
+    ports:
+      - 9800:9800 
+      - 9900:9900
+      
+  redis:
+    image: redis:latest
+    command: --loglevel warning --requirepass playedu_redis
+    restart: always
+    volumes:  
+      - ./data_redis:/data
+    ports:
+      - 6379:6379
+
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./data_mysql:/var/lib/mysql
+      - ./mysql:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: playedu
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306
+
+  minio:
+    image: minio/minio
+    command: server --console-address ":9001" /data
+    restart: always
+    volumes:
+      - ./data_minio:/data
+    environment:
+      MINIO_ACCESS_KEY: playedu_minio
+      MINIO_SECRET_KEY: playedu_minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    
